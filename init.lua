@@ -284,7 +284,7 @@ if EROSION then
 			elseif nodename == "trail:dirt_with_dry_grass" then
 				minetest.set_node(pos, {name = "default:dirt_with_dry_grass"})
 			elseif nodename == "trail:dirt_with_snow" then
-				minetest.set_node(pos, {name = "default:dirt_with_snoe"})
+				minetest.set_node(pos, {name = "default:dirt_with_snow"})
 			elseif nodename == "trail:sand" then
 				minetest.set_node(pos, {name = "default:sand"})
 			elseif nodename == "trail:desert_sand" then
