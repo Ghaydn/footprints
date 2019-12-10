@@ -1,0 +1,7 @@
+trail_erosion (Erode footsteps back to original soil type) bool true
+#This setting only has an effect if footstep erosion is also set to true
+trail_trail_erosion (Erode hard-packed trails back to dirt) bool true
+trail_erosion_interval (Erosion ABM interval) int 16
+trail_erosion_chance (Erosion ABM 1/x chance) int 128
+trail_hardpack_chance (Chance footprints in dirt turn to hardpacked soil) float 0.1
+trail_ice_chance (Chance footprints in snow turn to ice) float 0.05
