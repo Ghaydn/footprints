@@ -293,6 +293,43 @@ if minetest.get_modpath("farming") then
 		trampled_node_name = "trail:wheat",
 		randomize_trampled_param2 = true,
 	})
+	
+	minetest.register_node("trail:cotton", {
+		description = "Flattened Cotton",
+		tiles = {"trail_flat_cotton.png"},
+		inventory_image = "trail_flat_cotton.png",
+		drawtype = "nodebox",
+		paramtype = "light",
+		paramtype2 = "facedir",
+		buildable_to = true,
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.5, 0.5, -3 / 8, 0.5}
+			},
+		},
+		groups = {snappy = 3, flammable = 2, attached_node = 1},
+		drop = "",
+		sounds = sounds,
+	})
+	
+	trail.register_trample_node("farming:cotton_5", {
+		trampled_node_name = "trail:cotton",
+		randomize_trampled_param2 = true,
+	})
+	trail.register_trample_node("farming:cotton_6", {
+		trampled_node_name = "trail:cotton",
+		randomize_trampled_param2 = true,
+	})
+	trail.register_trample_node("farming:cotton_7", {
+		trampled_node_name = "trail:cotton",
+		randomize_trampled_param2 = true,
+	})
+	trail.register_trample_node("farming:cotton_8", {
+		trampled_node_name = "trail:cotton",
+		randomize_trampled_param2 = true,
+	})
+
 end
 
 -- Globalstep function
