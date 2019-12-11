@@ -17,10 +17,11 @@ trample_def:
 	randomize_trampled_param2 = nil, -- if true, sets param2 of trampled node to math.random(0,3)
 	erodes = true, -- sets the trampled node up to erode back into the non-trampled verison. ignored if trampled_node_name is a node that already exists, since that may already have an erosion target established
 	add_footprint_overlay = true, -- Applies the footprint texture over the +Y tile of the trampleable node. ignored if trampled_node_name is a node that already exists
+	footprint_overlay_texture = , -- defaults to "trail_footprint.png"
+	footprint_opacity = 64, -- defaults to 64 (0 is transparent, 255 is fully opaque)
 	hard_pack_node_name = nil, -- If the trampled node is walked on again this is the node that it can get trampled into further. ignored if trampled_node_name is a node that already exists, since it's expected this has already been established
 	hard_pack_probability = 0.1, -- The probability that walking on a trampled node will turn it into the hard-packed node. ignored if trampled_node_name is a node that already exists
 }
-
 
 If you've defined a hard_pack_node and want to have it able to erode back to base soil, you can use this callback to manually add it to the erosion system:
 

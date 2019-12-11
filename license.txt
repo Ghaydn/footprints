@@ -25,6 +25,11 @@ For more details:
 https://opensource.org/licenses/MIT
 
 License of media (textures)
+
+trail_flat_wheat.png
+trail_footprint.png (from https://github.com/minetest/minetest_game/commit/c7b9e734ffd815e9b86b1fcceba2293e3067785e by paramat)
+trail_trailside.png
+trail_trailtop.png
 ---------------------------
 
 Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)

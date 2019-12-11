@@ -13,7 +13,6 @@ local TRAIL_EROSION = minetest.settings:get_bool("trail_trail_erosion", true) --
 local EROINT = minetest.settings:get("trail_erosion_interval") or 16 -- Erosion interval.
 local EROCHA = minetest.settings:get("trail_erosion_chance") or 128 -- Erosion 1/x chance.
 
-
 -- Utility
 
 local function deep_copy(input)
@@ -79,6 +78,10 @@ trail.register_trample_node = function(trampleable_node_name, trample_def)
 		
 		-- Modify the +Y tile with a footprint overlay
 		if trample_def.add_footprint_overlay ~= false then
+			local footprint_overlay = trample_def.footprint_overlay or "trail_footprint.png"
+			local footprint_opacity = trample_def.footprint_opacity or 64
+			local overlay_texture = "^(" .. footprint_overlay .. "^[opacity:" .. tostring(footprint_opacity) .. ")"
+
 			local tiles = trampled_node_def.tiles
 			local first_tile = tiles[1]
 			local second_tile = tiles[2]
@@ -86,11 +89,11 @@ trail.register_trample_node = function(trampleable_node_name, trample_def)
 				-- The provided node def only has one tile for all sides. We need to only modify the +Y tile,
 				-- so we need to copy the original first tile into the second tile slot
 				tiles[2] = deep_copy(first_tile)
-			end		
+			end
 			if type(first_tile) == "table" then
-				first_tile.name = first_tile.name .. "^default_footprint.png"
+				first_tile.name = first_tile.name .. overlay_texture
 			elseif type(first_tile) == "string" then
-				first_tile = first_tile .. "^default_footprint.png"
+				first_tile = first_tile .. overlay_texture
 			end
 			trampled_node_def.tiles[1] = first_tile
 		end
@@ -135,104 +138,115 @@ end
 
 -- Nodes
 
--- hard-packed soil
-local trail_trail_def = {
-	tiles = {"trail_trailtop.png", "default_dirt.png",
-		"default_dirt.png^trail_trailside.png"},
-	groups = {crumbly = 2},
-	drop = "default:dirt",
-	sounds = default.node_sound_dirt_defaults(),
-}
-if TRAIL_EROSION then
-	trail_trail_def.groups.trail_erodes = 1
+local default_modpath = minetest.get_modpath("default")
+
+if default_modpath then
+	-- hard-packed soil
+	local trail_trail_def = {
+		tiles = {"trail_trailtop.png", "default_dirt.png",
+			"default_dirt.png^trail_trailside.png"},
+		groups = {crumbly = 2},
+		drop = "default:dirt",
+		sounds = default.node_sound_dirt_defaults(),
+	}
+	if TRAIL_EROSION then
+		trail_trail_def.groups.trail_erodes = 1
+	end
+	minetest.register_node("trail:trail", trail_trail_def)
+	if TRAIL_EROSION then
+		trail.register_erosion("trail:trail", "default:dirt")
+	end
+
+	-- Default dirt
+
+	trail.register_trample_node("default:dirt", {
+		trampled_node_name = "trail:dirt",
+		trampled_node_def_override = {description = "Dirt with Footprint",},
+		hard_pack_node_name = "trail:trail",
+		footprint_opacity = 96,
+		hard_pack_probability = TRACHA,
+	})
+
+	trail.register_trample_node("default:dirt_with_grass", {
+		trampled_node_name = "trail:dirt_with_grass",
+		trampled_node_def_override = {description = "Dirt with Grass and Footprint",},
+		hard_pack_node_name = "trail:trail",
+		hard_pack_probability = TRACHA,
+	})
+
+	trail.register_trample_node("default:dirt_with_dry_grass", {
+		trampled_node_name = "trail:dirt_with_dry_grass",
+		trampled_node_def_override = {description = "Dirt with Dry Grass and Footprint",},
+		hard_pack_node_name = "trail:trail",
+		hard_pack_probability = TRACHA,
+	})
+
+	trail.register_trample_node("default:dirt_with_snow", {
+		trampled_node_name = "trail:dirt_with_snow",
+		trampled_node_def_override = {description = "Dirt with Snow and Footprint",},
+		hard_pack_node_name = "trail:trail",
+		hard_pack_probability = TRACHA,
+	})
+
+	trail.register_trample_node("default:dirt_with_rainforest_litter", {
+		trampled_node_name = "trail:dirt_with_rainforest_litter",
+		trampled_node_def_override = {description = "Dirt with Rainforest Litter and Footprint",},
+		hard_pack_node_name = "trail:trail",
+		footprint_opacity = 96,
+		hard_pack_probability = TRACHA,
+	})
+
+	trail.register_trample_node("default:dirt_with_coniferous_litter", {
+		trampled_node_name = "trail:dirt_with_coniferous_litter",
+		trampled_node_def_override = {description = "Dirt with Coniferous Litter and Footprint",},
+		hard_pack_node_name = "trail:trail",
+		footprint_opacity = 128,
+		hard_pack_probability = TRACHA,
+	})
+
+	-- Default sand
+
+	trail.register_trample_node("default:sand", {
+		trampled_node_name = "trail:sand",
+		trampled_node_def_override = {description = "Sand with Footprint",},
+	})
+
+	trail.register_trample_node("default:desert_sand", {
+		trampled_node_name = "trail:desert_sand",
+		trampled_node_def_override = {description = "Desert Sand with Footprint",},
+	})
+
+	trail.register_trample_node("default:silver_sand", {
+		trampled_node_name = "trail:silver_sand",
+		trampled_node_def_override = {description = "Silver Sand with Footprint",},
+	})
+
+	trail.register_trample_node("default:gravel", {
+		trampled_node_name = "trail:gravel",
+		trampled_node_def_override = {description = "Gravel with Footprint",},
+		footprint_opacity = 128,
+	})
+
+	-- Default snow
+
+	trail.register_trample_node("default:snowblock", {
+		trampled_node_name = "trail:snowblock",
+		trampled_node_def_override = {description = "Snow Block with Footprint",},
+		hard_pack_node_name = "default:ice",
+		hard_pack_probability = ICECHA,
+	})
+
+	trail.register_trample_node("default:snow", {
+		trampled_node_name = "trail:snow",
+		trampled_node_def_override = {description = "Snow with Footprint",},
+	})
 end
-minetest.register_node("trail:trail", trail_trail_def)
-if TRAIL_EROSION then
-	trail.register_erosion("trail:trail", "default:dirt")
-end
-
--- Default dirt
-
-trail.register_trample_node("default:dirt", {
-	trampled_node_name = "trail:dirt",
-	trampled_node_def_override = {description = "Dirt with Footprint",},
-	hard_pack_node_name = "trail:trail",
-	hard_pack_probability = TRACHA,
-})
-
-trail.register_trample_node("default:dirt_with_grass", {
-	trampled_node_name = "trail:dirt_with_grass",
-	trampled_node_def_override = {description = "Dirt with Grass and Footprint",},
-	hard_pack_node_name = "trail:trail",
-	hard_pack_probability = TRACHA,
-})
-
-trail.register_trample_node("default:dirt_with_dry_grass", {
-	trampled_node_name = "trail:dirt_with_dry_grass",
-	trampled_node_def_override = {description = "Dirt with Dry Grass and Footprint",},
-	hard_pack_node_name = "trail:trail",
-	hard_pack_probability = TRACHA,
-})
-
-trail.register_trample_node("default:dirt_with_snow", {
-	trampled_node_name = "trail:dirt_with_snow",
-	trampled_node_def_override = {description = "Dirt with Snow and Footprint",},
-	hard_pack_node_name = "trail:trail",
-	hard_pack_probability = TRACHA,
-})
-
-trail.register_trample_node("default:dirt_with_rainforest_litter", {
-	trampled_node_name = "trail:dirt_with_rainforest_litter",
-	trampled_node_def_override = {description = "Dirt with Rainforest Litter and Footprint",},
-	hard_pack_node_name = "trail:trail",
-	hard_pack_probability = TRACHA,
-})
-
-trail.register_trample_node("default:dirt_with_coniferous_litter", {
-	trampled_node_name = "trail:dirt_with_coniferous_litter",
-	trampled_node_def_override = {description = "Dirt with Coniferous Litter and Footprint",},
-	hard_pack_node_name = "trail:trail",
-	hard_pack_probability = TRACHA,
-})
-
--- Default sand
-
-trail.register_trample_node("default:sand", {
-	trampled_node_name = "trail:sand",
-	trampled_node_def_override = {description = "Sand with Footprint",},
-})
-
-trail.register_trample_node("default:desert_sand", {
-	trampled_node_name = "trail:desert_sand",
-	trampled_node_def_override = {description = "Desert Sand with Footprint",},
-})
-
-trail.register_trample_node("default:silver_sand", {
-	trampled_node_name = "trail:silver_sand",
-	trampled_node_def_override = {description = "Silver Sand with Footprint",},
-})
-
-trail.register_trample_node("default:gravel", {
-	trampled_node_name = "trail:gravel",
-	trampled_node_def_override = {description = "Gravel with Footprint",},
-})
-
--- Default snow
-
-trail.register_trample_node("default:snowblock", {
-	trampled_node_name = "trail:snowblock",
-	trampled_node_def_override = {description = "Snow Block with Footprint",},
-	hard_pack_node_name = "default:ice",
-	hard_pack_probability = ICECHA,
-})
-
-trail.register_trample_node("default:snow", {
-	trampled_node_name = "trail:snow",
-	trampled_node_def_override = {description = "Snow with Footprint",},
-})
-
 
 if minetest.get_modpath("farming") then
+	local sounds
+	if default_modpath then
+		sounds = default.node_sound_leaves_defaults()
+	end
 	-- Flattened wheat
 	minetest.register_node("trail:wheat", {
 		description = "Flattened Wheat",
@@ -250,7 +264,7 @@ if minetest.get_modpath("farming") then
 		},
 		groups = {snappy = 3, flammable = 2, attached_node = 1},
 		drop = "",
-		sounds = default.node_sound_leaves_defaults(),
+		sounds = sounds,
 	})
 	
 	trail.register_trample_node("farming:wheat_5", {
@@ -283,6 +297,8 @@ if FOO then
 		return 0
 	end
 	
+	local math_floor = math.floor
+	
 	minetest.register_globalstep(function(dtime)
 		timer = timer + dtime
 		if timer > FUNCYC then
@@ -290,10 +306,13 @@ if FOO then
 			for _, player in ipairs(minetest.get_connected_players()) do
 				local pos = player:getpos()
 				local player_name = player:get_player_name()
+				local pos_x_plus_half = math_floor(pos.x + 0.5)
+				local pos_z_plus_half = math_floor(pos.z + 0.5)
+				local pos_y = pos.y
 				local current_player_pos = {
-					x = math.floor(pos.x + 0.5),
-					y = math.floor(pos.y + 0.2),
-					z = math.floor(pos.z + 0.5)
+					x = pos_x_plus_half,
+					y = math_floor(pos_y + 0.2),
+					z = pos_z_plus_half
 				}
 				
 				--if player_pos_previous[player_name] == nil then
@@ -305,9 +324,9 @@ if FOO then
 					current_player_pos.z ~= player_pos_previous[player_name].z then
 					
 					local p_snow = {
-						x = math.floor(pos.x + 0.5),
-						y = math.floor(pos.y + 1.2),
-						z = math.floor(pos.z + 0.5)
+						x = pos_x_plus_half,
+						y = math_floor(pos_y + 1.2),
+						z = pos_z_plus_half
 					}
 					local n_snow = minetest.get_node(p_snow).name
 					
@@ -316,25 +335,25 @@ if FOO then
 					if trail_def then
 						if math.random() <= trail_def.probability then
 							local p_snowpl = {
-								x = math.floor(pos.x + 0.5),
-								y = math.floor(pos.y + 0.5),
-								z = math.floor(pos.z + 0.5)
+								x = pos_x_plus_half,
+								y = math_floor(pos_y + 0.5),
+								z = pos_z_plus_half
 							}
 							minetest.set_node(p_snowpl, {name = trail_def.name, param2 = get_param2(trail_def)})
 						end
 					else
 						local p_ground = {
-							x = math.floor(pos.x + 0.5),
-							y = math.floor(pos.y + 0.4),
-							z = math.floor(pos.z + 0.5)
+							x = pos_x_plus_half,
+							y = math_floor(pos_y + 0.4),
+							z = pos_z_plus_half
 						}
 						local n_ground = minetest.get_node(p_ground).name
 						trail_def = trails[n_ground]
 						if trail_def and math.random() <= trail_def.probability then
 							local p_groundpl = {
-								x = math.floor(pos.x + 0.5),
-								y = math.floor(pos.y - 0.5),
-								z = math.floor(pos.z + 0.5)
+								x = pos_x_plus_half,
+								y = math_floor(pos_y - 0.5),
+								z =pos_z_plus_half
 							}
 							minetest.set_node(p_groundpl, {name = trail_def.name, param2 = get_param2(trail_def)})
 						end
