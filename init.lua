@@ -162,6 +162,22 @@ if default_modpath then
 		trail.register_erosion("trail:trail", "default:dirt")
 	end
 
+	-- hard-packed dry soil
+	local trail_dry_trail_def = {
+		tiles = {"trail_trailtop.png", "default_dry_dirt.png",
+			"default_dry_dirt.png^trail_trailside.png"},
+		groups = {crumbly = 2},
+		drop = "default:dry_dirt",
+		sounds = default.node_sound_dirt_defaults(),
+	}
+	if TRAIL_EROSION then
+		trail_dry_trail_def.groups.trail_erodes = 1
+	end
+	minetest.register_node("trail:dry_trail", trail_dry_trail_def)
+	if TRAIL_EROSION then
+		trail.register_erosion("trail:dry_trail", "default:dry_dirt")
+	end
+
 	-- Default dirt
 
 	trail.register_trample_node("default:dirt", {
@@ -210,6 +226,24 @@ if default_modpath then
 		trampled_node_def_override = {description = "Dirt with Coniferous Litter and Footprint",},
 		hard_pack_node_name = "trail:trail",
 		footprint_opacity = 128,
+		hard_pack_probability = HARDPACK_PROBABILITY,
+		hard_pack_count = HARDPACK_COUNT,
+	})
+
+	trail.register_trample_node("default:dry_dirt", {
+		trampled_node_name = "trail:dry_dirt",
+		trampled_node_def_override = {description = "Dry Dirt with Footprint",},
+		hard_pack_node_name = "trail:dry_trail",
+		footprint_opacity = 96,
+		hard_pack_probability = HARDPACK_PROBABILITY,
+		hard_pack_count = HARDPACK_COUNT,
+	})
+
+	trail.register_trample_node("default:dry_dirt_with_dry_grass", {
+		trampled_node_name = "trail:dry_dirt_with_dry_grass",
+		trampled_node_def_override = {description = "Dry Dirt with Dry Grass and Footprint",},
+		hard_pack_node_name = "trail:dry_trail",
+		footprint_opacity = 96,
 		hard_pack_probability = HARDPACK_PROBABILITY,
 		hard_pack_count = HARDPACK_COUNT,
 	})
