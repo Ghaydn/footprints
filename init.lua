@@ -1,6 +1,8 @@
 -- global callbacks
 trail = {}
 
+local S = minetest.get_translator(minetest.get_current_modname())
+
 -- Parameters
 
 local FOO = true -- Enable footprints.
@@ -182,7 +184,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dirt", {
 		trampled_node_name = "trail:dirt",
-		trampled_node_def_override = {description = "Dirt with Footprint",},
+		trampled_node_def_override = {description = S("Dirt with Footprint"),},
 		hard_pack_node_name = "trail:trail",
 		footprint_opacity = 96,
 		hard_pack_probability = HARDPACK_PROBABILITY,
@@ -190,7 +192,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dirt_with_grass", {
 		trampled_node_name = "trail:dirt_with_grass",
-		trampled_node_def_override = {description = "Dirt with Grass and Footprint",},
+		trampled_node_def_override = {description = S("Dirt with Grass and Footprint"),},
 		hard_pack_node_name = "trail:trail",
 		hard_pack_probability = HARDPACK_PROBABILITY,
 		hard_pack_count = HARDPACK_COUNT,
@@ -198,7 +200,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dirt_with_dry_grass", {
 		trampled_node_name = "trail:dirt_with_dry_grass",
-		trampled_node_def_override = {description = "Dirt with Dry Grass and Footprint",},
+		trampled_node_def_override = {description = S("Dirt with Dry Grass and Footprint"),},
 		hard_pack_node_name = "trail:trail",
 		hard_pack_probability = HARDPACK_PROBABILITY,
 		hard_pack_count = HARDPACK_COUNT,
@@ -206,7 +208,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dirt_with_snow", {
 		trampled_node_name = "trail:dirt_with_snow",
-		trampled_node_def_override = {description = "Dirt with Snow and Footprint",},
+		trampled_node_def_override = {description = S("Dirt with Snow and Footprint"),},
 		hard_pack_node_name = "trail:trail",
 		hard_pack_probability = HARDPACK_PROBABILITY,
 		hard_pack_count = HARDPACK_COUNT,
@@ -214,7 +216,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dirt_with_rainforest_litter", {
 		trampled_node_name = "trail:dirt_with_rainforest_litter",
-		trampled_node_def_override = {description = "Dirt with Rainforest Litter and Footprint",},
+		trampled_node_def_override = {description = S("Dirt with Rainforest Litter and Footprint"),},
 		hard_pack_node_name = "trail:trail",
 		footprint_opacity = 96,
 		hard_pack_probability = HARDPACK_PROBABILITY,
@@ -223,7 +225,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dirt_with_coniferous_litter", {
 		trampled_node_name = "trail:dirt_with_coniferous_litter",
-		trampled_node_def_override = {description = "Dirt with Coniferous Litter and Footprint",},
+		trampled_node_def_override = {description = S("Dirt with Coniferous Litter and Footprint"),},
 		hard_pack_node_name = "trail:trail",
 		footprint_opacity = 128,
 		hard_pack_probability = HARDPACK_PROBABILITY,
@@ -232,7 +234,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dry_dirt", {
 		trampled_node_name = "trail:dry_dirt",
-		trampled_node_def_override = {description = "Dry Dirt with Footprint",},
+		trampled_node_def_override = {description = S("Dry Dirt with Footprint"),},
 		hard_pack_node_name = "trail:dry_trail",
 		footprint_opacity = 96,
 		hard_pack_probability = HARDPACK_PROBABILITY,
@@ -241,7 +243,7 @@ if default_modpath then
 
 	trail.register_trample_node("default:dry_dirt_with_dry_grass", {
 		trampled_node_name = "trail:dry_dirt_with_dry_grass",
-		trampled_node_def_override = {description = "Dry Dirt with Dry Grass and Footprint",},
+		trampled_node_def_override = {description = S("Dry Dirt with Dry Grass and Footprint"),},
 		hard_pack_node_name = "trail:dry_trail",
 		footprint_opacity = 96,
 		hard_pack_probability = HARDPACK_PROBABILITY,
@@ -252,22 +254,22 @@ if default_modpath then
 
 	trail.register_trample_node("default:sand", {
 		trampled_node_name = "trail:sand",
-		trampled_node_def_override = {description = "Sand with Footprint",},
+		trampled_node_def_override = {description = S("Sand with Footprint"),},
 	})
 
 	trail.register_trample_node("default:desert_sand", {
 		trampled_node_name = "trail:desert_sand",
-		trampled_node_def_override = {description = "Desert Sand with Footprint",},
+		trampled_node_def_override = {description = S("Desert Sand with Footprint"),},
 	})
 
 	trail.register_trample_node("default:silver_sand", {
 		trampled_node_name = "trail:silver_sand",
-		trampled_node_def_override = {description = "Silver Sand with Footprint",},
+		trampled_node_def_override = {description = S("Silver Sand with Footprint"),},
 	})
 
 	trail.register_trample_node("default:gravel", {
 		trampled_node_name = "trail:gravel",
-		trampled_node_def_override = {description = "Gravel with Footprint",},
+		trampled_node_def_override = {description = S("Gravel with Footprint"),},
 		footprint_opacity = 128,
 	})
 
@@ -275,14 +277,14 @@ if default_modpath then
 
 	trail.register_trample_node("default:snowblock", {
 		trampled_node_name = "trail:snowblock",
-		trampled_node_def_override = {description = "Snow Block with Footprint",},
+		trampled_node_def_override = {description = S("Snow Block with Footprint"),},
 		hard_pack_node_name = "default:ice",
 		hard_pack_probability = ICE_PROBABILITY,
 	})
 
 	trail.register_trample_node("default:snow", {
 		trampled_node_name = "trail:snow",
-		trampled_node_def_override = {description = "Snow with Footprint",},
+		trampled_node_def_override = {description = S("Snow with Footprint"),},
 	})
 end
 
@@ -293,7 +295,7 @@ if minetest.get_modpath("farming") then
 	end
 	-- Flattened wheat
 	minetest.register_node("trail:wheat", {
-		description = "Flattened Wheat",
+		description = S("Flattened Wheat"),
 		tiles = {"trail_flat_wheat.png"},
 		inventory_image = "trail_flat_wheat.png",
 		drawtype = "nodebox",
@@ -329,7 +331,7 @@ if minetest.get_modpath("farming") then
 	})
 	
 	minetest.register_node("trail:cotton", {
-		description = "Flattened Cotton",
+		description = S("Flattened Cotton"),
 		tiles = {"trail_flat_cotton.png"},
 		inventory_image = "trail_flat_cotton.png",
 		drawtype = "nodebox",
