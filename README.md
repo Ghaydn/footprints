@@ -47,13 +47,22 @@ trample_def:
 
 Note that all of the parameters in trample_def have default values, so if you want you can just pass in nil and the trail mod will create a footstep-marked version of the node and set it all up for you with no further information needed. "trail.register_trample_node("modname:dirt")" will work.
 
+### Eroding hardpack back to soil over time
+
 If you've defined a hard_pack_node and want to have it able to erode back to base soil, you can use this callback to manually add it to the erosion system:
 
 ```
-trail.register_erosion(source_node_name, destination_node_name)
+trail.register_erosion(starting_node_name, restored_node_name)
 ```
-
 Note that the source_node should be in group trail_erodes or an error will be thrown.
+
+### Using a hoe to convert hardpack back to soil
+
+If you've got the `farming` mod installed you can allow hardpack nodes to be restored back to soil using a hoe with the following function:
+
+```
+trail.register_hoe_converts(starting_node_name, restored_node_name)
+```
 
 ## License
 

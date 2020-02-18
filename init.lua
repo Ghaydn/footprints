@@ -1,6 +1,8 @@
 -- global callbacks
 trail = {}
 
+local default_modpath = minetest.get_modpath("default")
+
 local S = minetest.get_translator(minetest.get_current_modname())
 
 -- Parameters
@@ -143,8 +145,6 @@ end
 
 -- Nodes
 
-local default_modpath = minetest.get_modpath("default")
-
 if default_modpath then
 	-- hard-packed soil
 	local trail_trail_def = {
@@ -186,6 +186,7 @@ if default_modpath then
 		hard_pack_node_name = "trail:trail",
 		footprint_opacity = 96,
 		hard_pack_probability = HARDPACK_PROBABILITY,
+		hard_pack_count = HARDPACK_COUNT,
 	})
 
 	trail.register_trample_node("default:dirt_with_grass", {
@@ -288,6 +289,8 @@ if default_modpath then
 end
 
 if minetest.get_modpath("farming") then
+	local hoe_converts_nodes = {}
+
 	local sounds
 	if default_modpath then
 		sounds = default.node_sound_leaves_defaults()
@@ -364,7 +367,69 @@ if minetest.get_modpath("farming") then
 		trampled_node_name = "trail:cotton",
 		randomize_trampled_param2 = true,
 	})
+	
+	-- Allow hoes to turn hardpack back into bare dirt
+	trail.register_hoe_converts = function(target_node, converted_node)
+		hoe_converts_nodes[target_node] = converted_node
+	end
+	
+	local old_hoe_on_use = farming.hoe_on_use
+	if not old_hoe_on_use then
+		-- Something's wrong, don't override
+		return
+	end
 
+	local new_hoe_on_use = function(itemstack, user, pointed_thing, uses)
+		local pt = pointed_thing
+		-- check if pointing at a node
+		if not pt then
+			return
+		end
+		if pt.type ~= "node" then
+			return
+		end
+	
+		local under_node = minetest.get_node(pt.under)
+		local restore_node = hoe_converts_nodes[under_node.name]
+
+		-- check if pointing at hardpack
+		if restore_node then
+			if minetest.is_protected(pt.under, user:get_player_name()) then
+				minetest.record_protection_violation(pt.under, user:get_player_name())
+				return
+			end
+	
+			-- turn the node into soil and play sound
+			minetest.set_node(pt.under, {name = restore_node})
+			minetest.sound_play("default_dig_crumbly", {
+				pos = pt.under,
+				gain = 0.5,
+			})
+			if not (creative and creative.is_enabled_for 
+					and creative.is_enabled_for(user:get_player_name())) then
+				-- wear tool
+				local wdef = itemstack:get_definition()
+				itemstack:add_wear(65535/(uses-1))
+				-- tool break sound
+				if itemstack:get_count() == 0 and wdef.sound and wdef.sound.breaks then
+					minetest.sound_play(wdef.sound.breaks, {pos = pt.above, gain = 0.5})
+				end
+			end
+			return itemstack
+		end
+		
+		return old_hoe_on_use(itemstack, user, pointed_thing, uses)
+	end
+	
+	farming.hoe_on_use = new_hoe_on_use
+else
+	trail.register_hoe_converts = function(target_node, converted_node)
+	end
+end
+
+if default_modpath then
+	trail.register_hoe_converts("trail:trail", "default:dirt")
+	trail.register_hoe_converts("trail:dry_trail", "default:dry_dirt")
 end
 
 -- Globalstep function
