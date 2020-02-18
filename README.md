@@ -4,7 +4,7 @@ It also allows players to flatten plants by walking on them.
 
 It includes definitions for footprint-capable nodes in the "default" mod, and has an API for allowing nodes in other mods to use the same system.
 
-#API
+## API
 
 New trampled nodes can be registered with this API:
 
