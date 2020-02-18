@@ -5,14 +5,12 @@ local S = minetest.get_translator(minetest.get_current_modname())
 
 -- Parameters
 
-local FOO = true -- Enable footprints.
 local GLOBALSTEP_INTERVAL = 0.2 -- Function cycle in seconds.
 
-local HARDPACK_PROBABILITY = minetest.settings:get("trail_hardpack_probability") or 0.5 -- Chance walked dirt/grass is worn and compacted to trail:trail.
+local HARDPACK_PROBABILITY = minetest.settings:get("trail_hardpack_probability") or 0.9 -- Chance walked dirt/grass is worn and compacted to trail:trail.
 local HARDPACK_COUNT = minetest.settings:get("trail_hardpack_count") or 5 -- Number of times the above chance needs to be passed for soil to compact.
-local ICE_PROBABILITY = minetest.settings:get("trail_ice_probability") or 0.05 -- Chance walked snowblock is compacted to ice.
 local EROSION = minetest.settings:get_bool("trail_erosion", true) -- Enable footprint erosion.
-local TRAIL_EROSION = minetest.settings:get_bool("trail_trail_erosion", true) -- Allow hard-packed soil to erode back to dirt
+local TRAIL_EROSION = minetest.settings:get_bool("trail_trail_erosion", false) -- Allow hard-packed soil to erode back to dirt
 local EROSION_INTERVAL = minetest.settings:get("trail_erosion_interval") or 16 -- Erosion interval.
 local EROSION_CHANCE = minetest.settings:get("trail_erosion_chance") or 128 -- Erosion 1/x chance.
 
@@ -31,14 +29,14 @@ end
 
 -- Player positions
 
-local player_pos_previous = {}
+local player_pos_previous_map = {}
 
 minetest.register_on_joinplayer(function(player)
-	player_pos_previous[player:get_player_name()] = {x = 0, y = 0, z = 0}
+	player_pos_previous_map[player:get_player_name()] = {x = 0, y = 0, z = 0}
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	player_pos_previous[player:get_player_name()] = nil
+	player_pos_previous_map[player:get_player_name()] = nil
 end)
 
 local trails = {}
@@ -279,7 +277,8 @@ if default_modpath then
 		trampled_node_name = "trail:snowblock",
 		trampled_node_def_override = {description = S("Snow Block with Footprint"),},
 		hard_pack_node_name = "default:ice",
-		hard_pack_probability = ICE_PROBABILITY,
+		hard_pack_probability = HARDPACK_PROBABILITY,
+		hard_pack_count = HARDPACK_COUNT,
 	})
 
 	trail.register_trample_node("default:snow", {
@@ -370,103 +369,104 @@ end
 
 -- Globalstep function
 
-if FOO then
-	local timer = 0
-	
-	local get_param2 = function(trail_def)
-		if trail_def.randomize_trampled_param2 then
-			return math.random(0,3)
-		end
-		return 0
+local timer = 0
+
+local get_param2 = function(trail_def)
+	if trail_def.randomize_trampled_param2 then
+		return math.random(0,3)
 	end
-	
-	local test_trample_count = function(trail_def, pos)
-		local target_count = trail_def.count
-		if target_count <= 1 then
-			return true
-		end
-		local meta = minetest.get_meta(pos)
-		local trampled_count = meta:get_int("trail_trample_count")
-		trampled_count = trampled_count + 1
-		if trampled_count >= target_count then
-			return true
-		end
-		meta:set_int("trail_trample_count", trampled_count)
-		return false
+	return 0
+end
+
+local test_trample_count = function(trail_def, pos)
+	local target_count = trail_def.count
+	if target_count <= 1 then
+		return true
 	end
-	
-	local math_floor = math.floor
-	
-	minetest.register_globalstep(function(dtime)
-		timer = timer + dtime
-		if timer > GLOBALSTEP_INTERVAL then
-			timer = 0
-			for _, player in ipairs(minetest.get_connected_players()) do
-				local pos = player:getpos()
-				local player_name = player:get_player_name()
-				local pos_x_plus_half = math_floor(pos.x + 0.5)
-				local pos_z_plus_half = math_floor(pos.z + 0.5)
-				local pos_y = pos.y
-				local current_player_pos = {
+	local meta = minetest.get_meta(pos)
+	local trampled_count = meta:get_int("trail_trample_count")
+	trampled_count = trampled_count + 1
+	if trampled_count >= target_count then
+		return true
+	end
+	meta:set_int("trail_trample_count", trampled_count)
+	return false
+end
+
+local math_floor = math.floor
+
+minetest.register_globalstep(function(dtime)
+	timer = timer + dtime
+	if timer > GLOBALSTEP_INTERVAL then
+		timer = 0
+		for _, player in ipairs(minetest.get_connected_players()) do
+			local pos = player:get_pos()
+			local player_name = player:get_player_name()
+			local pos_x_plus_half = math_floor(pos.x + 0.5)
+			local pos_z_plus_half = math_floor(pos.z + 0.5)
+			local pos_y = pos.y
+			local current_player_pos = {
+				x = pos_x_plus_half,
+				y = math_floor(pos_y + 0.2),
+				z = pos_z_plus_half
+			}
+			
+			--if player_pos_previous_map[player_name] == nil then
+				--break
+			--end
+			
+			local player_pos_previous = player_pos_previous_map[player_name]
+
+			if current_player_pos.x ~= player_pos_previous.x or
+				current_player_pos.y < player_pos_previous.y or
+				current_player_pos.z ~= player_pos_previous.z then
+				
+				local pos_ground_cover = {
 					x = pos_x_plus_half,
-					y = math_floor(pos_y + 0.2),
+					y = math_floor(pos_y + 1.2),
 					z = pos_z_plus_half
 				}
+				local name_ground_cover = minetest.get_node(pos_ground_cover).name
 				
-				--if player_pos_previous[player_name] == nil then
-					--break
-				--end
-
-				if current_player_pos.x ~= player_pos_previous[player_name].x or
-					current_player_pos.y < player_pos_previous[player_name].y or
-					current_player_pos.z ~= player_pos_previous[player_name].z then
-					
-					local p_snow = {
-						x = pos_x_plus_half,
-						y = math_floor(pos_y + 1.2),
-						z = pos_z_plus_half
-					}
-					local n_snow = minetest.get_node(p_snow).name
-					
-					-- test ground cover first (snow, wheat)
-					local trail_def = trails[n_snow]
-					if trail_def then
-						if math.random() <= trail_def.probability then
-							local p_snowpl = {
-								x = pos_x_plus_half,
-								y = math_floor(pos_y + 0.5),
-								z = pos_z_plus_half
-							}
-							if test_trample_count(trail_def, p_snowpl) then
-								minetest.set_node(p_snowpl, {name = trail_def.name, param2 = get_param2(trail_def)})
-							end
-						end
-					else
-						local p_ground = {
+				-- test ground cover first (snow, wheat)
+				local trail_def = trails[name_ground_cover]
+				if trail_def then
+					if math.random() <= trail_def.probability then
+						local pos_ground_cover_plus = {
 							x = pos_x_plus_half,
-							y = math_floor(pos_y + 0.4),
+							y = math_floor(pos_y + 0.5),
 							z = pos_z_plus_half
 						}
-						local n_ground = minetest.get_node(p_ground).name
-						trail_def = trails[n_ground]
-						if trail_def and math.random() <= trail_def.probability then
-							local p_groundpl = {
-								x = pos_x_plus_half,
-								y = math_floor(pos_y - 0.5),
-								z =pos_z_plus_half
-							}
-							if test_trample_count(trail_def, p_groundpl) then
-								minetest.set_node(p_groundpl, {name = trail_def.name, param2 = get_param2(trail_def)})
-							end
+						if test_trample_count(trail_def, pos_ground_cover_plus) then
+							minetest.set_node(pos_ground_cover_plus, {name = trail_def.name, param2 = get_param2(trail_def)})
+						end
+					end
+				else
+					local pos_ground = {
+						x = pos_x_plus_half,
+						y = math_floor(pos_y + 0.4),
+						z = pos_z_plus_half
+					}
+					local name_ground = minetest.get_node(pos_ground).name
+					trail_def = trails[name_ground]
+					if trail_def and math.random() <= trail_def.probability then
+						local pos_groundpl = {
+							x = pos_x_plus_half,
+							y = math_floor(pos_y - 0.5),
+							z =pos_z_plus_half
+						}
+						if test_trample_count(trail_def, pos_groundpl) then
+							minetest.set_node(pos_groundpl, {name = trail_def.name, param2 = get_param2(trail_def)})
 						end
 					end
 				end
-
-				player_pos_previous[player_name] = current_player_pos
 			end
+
+			player_pos_previous_map[player_name] = current_player_pos
 		end
-	end)
-end
+	end
+end)
+
 
 -- ABM
 
@@ -480,7 +480,13 @@ if EROSION then
 			local nodename = node.name
 			local erodes_to = erosion[nodename]
 			if erodes_to then
-				minetest.set_node(pos, {name = erodes_to})
+				local meta = minetest.get_meta(pos)
+				local trampled_count = meta:get_int("trail_trample_count") - 1
+				if trampled_count <= 0 then
+					minetest.set_node(pos, {name = erodes_to})
+				else
+					meta:set_int("trail_trample_count", trampled_count)
+				end				
 			else
 				minetest.log("error", "[trail] The node " .. nodename .. " is in group trail_erodes but "
 					.. " didn't have an erosion target node defined.")
