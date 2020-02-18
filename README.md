@@ -21,20 +21,23 @@ trample_def:
 	                       -- will be used to override properties ignored if
 	                       -- trampled_node_name is a node that already exists.
 	probability = 1, -- chance that stepping on this node will cause it to turn
-                           -- into the trampled version (0.0 to 1.0)
+                           -- into the trampled version (range is 0.0 to 1.0)
 	trample_count = 1, -- The number of times this node needs to be stepped on
                            -- (and pass the probability check) to transition to
                            -- the trampled state
 	randomize_trampled_param2 = nil, -- if true, sets param2 of trampled node to math.random(0,3)
-	erodes = true,         -- sets the trampled node up to erode back into the non-trampled
-                           -- version. ignored if trampled_node_name is a node that already
-                           -- exists, since that may already have an erosion target established
+                           -- This is used for trampled wheat, for example, to randomize the thatch's
+						   -- direction.
+	erodes = true,         -- sets the trampled node to erode back into the non-trampled
+                           -- version over time, if erosion is enabled in this mod's settings.
+                           -- Ignored if trampled_node_name is a node that already
+                           -- exists, since that may already have an erosion target established.
 	add_footprint_overlay = true, -- Applies the footprint texture over the +Y tile of the
                            -- trampleable node. ignored if trampled_node_name is a node that already exists
 	footprint_overlay_texture = "trail_footprint.png",
 	footprint_opacity = 64, -- defaults to 64 (0 is transparent, 255 is fully opaque)
 	hard_pack_node_name = nil, -- If the trampled node is walked on again this is the
-                           -- node that it can get trampled into further. ignored if
+                           -- node that it can get further packed down into. ignored if
                            -- trampled_node_name is a node that already exists, since
                            -- it's expected this has already been established
 	hard_pack_probability = 0.9, -- The probability that walking on a trampled node

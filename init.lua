@@ -13,8 +13,8 @@ local HARDPACK_PROBABILITY = minetest.settings:get("trail_hardpack_probability")
 local HARDPACK_COUNT = minetest.settings:get("trail_hardpack_count") or 5 -- Number of times the above chance needs to be passed for soil to compact.
 local EROSION = minetest.settings:get_bool("trail_erosion", true) -- Enable footprint erosion.
 local TRAIL_EROSION = minetest.settings:get_bool("trail_trail_erosion", false) -- Allow hard-packed soil to erode back to dirt
-local EROSION_INTERVAL = minetest.settings:get("trail_erosion_interval") or 16 -- Erosion interval.
-local EROSION_CHANCE = minetest.settings:get("trail_erosion_chance") or 128 -- Erosion 1/x chance.
+local EROSION_INTERVAL = minetest.settings:get("trail_erosion_interval") or 128 -- Erosion interval.
+local EROSION_CHANCE = minetest.settings:get("trail_erosion_chance") or 2 -- Erosion 1/x chance.
 
 -- Utility
 
