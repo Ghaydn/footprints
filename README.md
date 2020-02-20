@@ -71,6 +71,6 @@ footprints.register_hoe_converts(starting_node_name, restored_node_name)
 
 Licenses: Source code MIT. Textures CC BY-SA (3.0)
 
-This mod was developed by paramat from 'desire path' mod by Casimir: https://forum.minetest.net/viewtopic.php?id=3390
-Trail 0.3.1 by paramat: https://forum.minetest.net/viewtopic.php?f=11&t=6773
-Version 0.4 for Minetest 0.5 was developed by FaceDeer and renamed "footprints"
+- This mod was developed by paramat from 'desire path' mod by Casimir: https://forum.minetest.net/viewtopic.php?id=3390
+- Trail 0.3.1 by paramat: https://forum.minetest.net/viewtopic.php?f=11&t=6773
+- Version 0.4 for Minetest 0.5 was developed by FaceDeer and renamed "footprints"
