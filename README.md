@@ -1,3 +1,5 @@
+![](./screenshot.jpg)
+
 This mod makes soil and soil-like nodes capable of holding temporary "footprint" impressions, and if they're walked on repeatedly turning into hard-packed trails.
 
 It also allows players to flatten plants by walking on them.
