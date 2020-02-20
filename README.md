@@ -9,7 +9,7 @@ It includes definitions for footprint-capable nodes in the "default" mod, and ha
 New trampled nodes can be registered with this API:
 
 ```
-trail.register_trample_node(trampleable_node_name, trample_def)
+footprints.register_trample_node(trampleable_node_name, trample_def)
 
 trample_def:
 {
@@ -34,7 +34,7 @@ trample_def:
                            -- exists, since that may already have an erosion target established.
 	add_footprint_overlay = true, -- Applies the footprint texture over the +Y tile of the
                            -- trampleable node. ignored if trampled_node_name is a node that already exists
-	footprint_overlay_texture = "trail_footprint.png",
+	footprint_overlay_texture = "footprints_footprint.png",
 	footprint_opacity = 64, -- defaults to 64 (0 is transparent, 255 is fully opaque)
 	hard_pack_node_name = nil, -- If the trampled node is walked on again this is the
                            -- node that it can get further packed down into. ignored if
@@ -48,30 +48,29 @@ trample_def:
 }
 ```
 
-Note that all of the parameters in trample_def have default values, so if you want you can just pass in nil and the trail mod will create a footstep-marked version of the node and set it all up for you with no further information needed. "trail.register_trample_node("modname:dirt")" will work.
+Note that all of the parameters in trample_def have default values, so if you want you can just pass in nil and the footprints mod will create a footstep-marked version of the node and set it all up for you with no further information needed. "footprints.register_trample_node("modname:dirt")" will work.
 
 ### Eroding hardpack back to soil over time
 
 If you've defined a hard_pack_node and want to have it able to erode back to base soil, you can use this callback to manually add it to the erosion system:
 
 ```
-trail.register_erosion(starting_node_name, restored_node_name)
+footprints.register_erosion(starting_node_name, restored_node_name)
 ```
-Note that the source_node should be in group trail_erodes or an error will be thrown.
+Note that the source_node should be in group footprints_erodes or an error will be thrown.
 
 ### Using a hoe to convert hardpack back to soil
 
 If you've got the `farming` mod installed you can allow hardpack nodes to be restored back to soil using a hoe with the following function:
 
 ```
-trail.register_hoe_converts(starting_node_name, restored_node_name)
+footprints.register_hoe_converts(starting_node_name, restored_node_name)
 ```
 
 ## License
 
 Licenses: Source code MIT. Textures CC BY-SA (3.0)
 
-This mod was developed by paramat from 'desire path' mod by Casimir
-https://forum.minetest.net/viewtopic.php?id=3390
-Trail 0.3.1 by paramat
-Version 0.4 for Minetest 0.5 was developed by FaceDeer
+This mod was developed by paramat from 'desire path' mod by Casimir: https://forum.minetest.net/viewtopic.php?id=3390
+Trail 0.3.1 by paramat: https://forum.minetest.net/viewtopic.php?f=11&t=6773
+Version 0.4 for Minetest 0.5 was developed by FaceDeer and renamed "footprints"

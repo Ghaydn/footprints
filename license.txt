@@ -3,7 +3,7 @@ License of source code
 
 The MIT License (MIT)
 Copyright (C) 2013-2017 paramat
-Copyright (C) 2019 FaceDeer
+Copyright (C) 2020 FaceDeer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -26,12 +26,12 @@ https://opensource.org/licenses/MIT
 
 License of media (textures)
 
-trail_flat_wheat.png by paramat
-trail_footprint.png (from https://github.com/minetest/minetest_game/commit/c7b9e734ffd815e9b86b1fcceba2293e3067785e by paramat)
-trail_trailside.png by paramat
-trail_trailtop.png by paramat
+footprints_flat_wheat.png by paramat
+footprints_footprint.png (from https://github.com/minetest/minetest_game/commit/c7b9e734ffd815e9b86b1fcceba2293e3067785e by paramat)
+footprints_trailside.png by paramat
+footprints_trailtop.png by paramat
 
-trail_flat_cotton.png by FaceDeer (C) 2019
+footprints_flat_cotton.png by FaceDeer (C) 2019
 ---------------------------
 
 Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
