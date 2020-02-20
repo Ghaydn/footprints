@@ -532,7 +532,6 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
-
 -- ABM
 
 if EROSION then
@@ -559,3 +558,22 @@ if EROSION then
 		end
 	})
 end
+
+minetest.register_alias("trail:cotton",						"footprints:cotton")
+minetest.register_alias("trail:desert_sand",				"footprints:desert_sand")
+minetest.register_alias("trail:dirt",						"footprints:dirt")
+minetest.register_alias("trail:dirt_with_coniferous_litter","footprints:dirt_with_coniferous_litter")
+minetest.register_alias("trail:dirt_with_dry_grass",		"footprints:dirt_with_dry_grass")
+minetest.register_alias("trail:dirt_with_grass",			"footprints:dirt_with_grass")
+minetest.register_alias("trail:dirt_with_rainforest_litter","footprints:dirt_with_rainforest_litter")
+minetest.register_alias("trail:dirt_with_snow",				"footprints:dirt_with_snow")
+minetest.register_alias("trail:dry_dirt",					"footprints:dry_dirt")
+minetest.register_alias("trail:dry_dirt_with_dry_grass",	"footprints:dry_dirt_with_dry_grass")
+minetest.register_alias("trail:dry_trail",					"footprints:dry_trail")
+minetest.register_alias("trail:gravel",						"footprints:gravel")
+minetest.register_alias("trail:sand",						"footprints:sand")
+minetest.register_alias("trail:silver_sand",				"footprints:silver_sand")
+minetest.register_alias("trail:snow",						"footprints:snow")
+minetest.register_alias("trail:snowblock",					"footprints:snowblock")
+minetest.register_alias("trail:trail",						"footprints:trail")
+minetest.register_alias("trail:wheat",						"footprints:wheat")
