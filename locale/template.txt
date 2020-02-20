@@ -1,4 +1,4 @@
-# textdomain: trail
+# textdomain: footprints
 
 
 ### init.lua ###
