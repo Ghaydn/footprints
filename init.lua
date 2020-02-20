@@ -10,7 +10,7 @@ local S = minetest.get_translator(minetest.get_current_modname())
 local GLOBALSTEP_INTERVAL = 0.2 -- Function cycle in seconds.
 
 local HARDPACK_PROBABILITY = minetest.settings:get("trail_hardpack_probability") or 0.9 -- Chance walked dirt/grass is worn and compacted to trail:trail.
-local HARDPACK_COUNT = minetest.settings:get("trail_hardpack_count") or 5 -- Number of times the above chance needs to be passed for soil to compact.
+local HARDPACK_COUNT = minetest.settings:get("trail_hardpack_count") or 10 -- Number of times the above chance needs to be passed for soil to compact.
 local EROSION = minetest.settings:get_bool("trail_erosion", true) -- Enable footprint erosion.
 local TRAIL_EROSION = minetest.settings:get_bool("trail_trail_erosion", false) -- Allow hard-packed soil to erode back to dirt
 local EROSION_INTERVAL = minetest.settings:get("trail_erosion_interval") or 128 -- Erosion interval.

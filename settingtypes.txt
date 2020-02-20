@@ -11,4 +11,4 @@ trail_hardpack_probability (Probability footprints in dirt turn to hardpacked so
 #This setting works in combination with trail_hardpack_probability. By default,
 #once a footprint has been stepped on enough to increment its counter 5 times
 #it'll turn the soil hard-packed.
-trail_hardpack_count (Number of times the hardpack check needs to pass) int 5
+trail_hardpack_count (Number of times the hardpack check needs to pass) int 10

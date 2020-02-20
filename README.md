@@ -43,7 +43,7 @@ trample_def:
 	hard_pack_probability = 0.9, -- The probability that walking on a trampled node
                            -- will turn it into the hard-packed node (0.0 to 1.0).
                            -- ignored if trampled_node_name is a node that already exists
-	hard_pack_count = 5, -- The number of times the trampled node needs to be stepped on
+	hard_pack_count = 10, -- The number of times the trampled node needs to be stepped on
                            -- (and pass the probability check) to turn to the hard packed state
 }
 ```

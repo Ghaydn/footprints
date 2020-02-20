@@ -1,3 +1,8 @@
+# textdomain: trail
+
+
+### init.lua ###
+
 Desert Sand with Footprint=
 Dirt with Coniferous Litter and Footprint=
 Dirt with Dry Grass and Footprint=
