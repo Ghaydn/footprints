@@ -20,7 +20,7 @@ trample_def:
 	trampled_node_def_override = {}, -- If trampled_node_name doesn't exist a new
 	                       -- node will be registered based on the definition of
 	                       -- trampleable_node_name. Any properties in this table
-	                       -- will be used to override properties ignored if
+	                       -- will be used to override properties. Ignored if
 	                       -- trampled_node_name is a node that already exists.
 	probability = 1, -- chance that stepping on this node will cause it to turn
                            -- into the trampled version (range is 0.0 to 1.0)
