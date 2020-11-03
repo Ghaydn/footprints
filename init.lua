@@ -476,11 +476,11 @@ minetest.register_globalstep(function(dtime)
 				z = pos_z_plus_half
 			}
 			
-			--if player_pos_previous_map[player_name] == nil then
-				--break
-			--end
-			
 			local player_pos_previous = player_pos_previous_map[player_name]
+
+			if player_pos_previous == nil then
+				break
+			end
 
 			if current_player_pos.x ~= player_pos_previous.x or
 				current_player_pos.y < player_pos_previous.y or
