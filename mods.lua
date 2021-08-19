@@ -505,6 +505,24 @@ if TRAMPLE_GRASS then
 			base_probability = 0.9,
 		})
 
+		footprints.register_trampled_plant("default:dry_grass", {
+			growth_stages = 5,
+			trample_to_lower_stage = true,
+			base_probability = 0.9,
+		})
+
+		footprints.register_trampled_plant("default:marram_grass", {
+			growth_stages = 3,
+			trample_to_lower_stage = true,
+			base_probability = 0.9,
+		})
+
+		footprints.register_trampled_plant("default:fern", {
+			growth_stages = 3,
+			trample_to_lower_stage = true,
+			base_probability = 0.9,
+		})
+
 		--disappearing grasses
 		table.insert(grasses, "default:junglegrass")
 		table.insert(grasses, "default:dry_shrub")

@@ -328,7 +328,7 @@ minetest.register_globalstep(function(dtime)
 			local player_name = player:get_player_name()
 			local pos_x_plus_half = math.floor(pos.x + 0.5)
 			local pos_z_plus_half = math.floor(pos.z + 0.5)
-			local pos_y = math.floor(pos.y + 0.2) --Changed this offset to 0.4 (was 0.2 andnot here) after rewriting some code
+			local pos_y = math.floor(pos.y + 0.4) --Changed this offset to 0.4 (was 0.2 and not here) after rewriting some code
 			local current_player_pos = { --where player really is
 				x = pos_x_plus_half,
 				y = pos_y,
