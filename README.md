@@ -75,4 +75,9 @@ Licenses: Source code MIT. Textures CC BY-SA (3.0)
 
 - This mod was developed by paramat from 'desire path' mod by Casimir: https://forum.minetest.net/viewtopic.php?id=3390
 - Trail 0.3.1 by paramat: https://forum.minetest.net/viewtopic.php?f=11&t=6773
-- Version 0.4 for Minetest 0.5 was developed by FaceDeer and renamed "footprints"
+- Version 0.4 for Minetest 5.0 was developed by FaceDeer and renamed "footprints"
+- Version 0.5 ghaydn:
+	added compatibility with Farming Redo, Ethereal, MoreTrees, Cool Trees, NodeCore
+	changed farming crops trampling mechanics
+	fixed node doubling bug
+	added trampling of grass and saplings

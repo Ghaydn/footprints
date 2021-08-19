@@ -1,3 +1,6 @@
+--Minetest FOOTPRINTS mod: compatibility file
+--This file contents core functionality
+
 -- global callbacks
 footprints = {}
 
@@ -9,14 +12,17 @@ local S = minetest.get_translator(minetest.get_current_modname())
 
 local GLOBALSTEP_INTERVAL = 0.2 -- Function cycle in seconds.
 
-local HARDPACK_PROBABILITY = minetest.settings:get("footprints_hardpack_probability") or 0.9 -- Chance walked dirt/grass is worn and compacted to footprints:trail.
-local HARDPACK_COUNT = minetest.settings:get("footprints_hardpack_count") or 10 -- Number of times the above chance needs to be passed for soil to compact.
 local EROSION = minetest.settings:get_bool("footprints_erosion", true) -- Enable footprint erosion.
-local FOOTPRINTS_EROSION = minetest.settings:get_bool("footprints_trail_erosion", false) -- Allow hard-packed soil to erode back to dirt
 local EROSION_INTERVAL = minetest.settings:get("footprints_erosion_interval") or 128 -- Erosion interval.
 local EROSION_CHANCE = minetest.settings:get("footprints_erosion_chance") or 2 -- Erosion 1/x chance.
+local SQUARED_PROBABILITIES = minetest.settings:get_bool("footprints_squared_probabilities", true)
 
 -- Utility
+
+local sounds
+if default_modpath then
+	sounds = default.node_sound_leaves_defaults()
+end
 
 local function deep_copy(input)
 	if type(input) ~= "table" then
@@ -143,197 +149,14 @@ footprints.register_erosion = function(source_node_name, destination_node_name)
 	erosion[source_node_name] = destination_node_name
 end
 
--- Nodes
 
-if default_modpath then
-	-- hard-packed soil
-	local footprints_trail_def = {
-		tiles = {"footprints_trailtop.png", "default_dirt.png",
-			"default_dirt.png^footprints_trailside.png"},
-		groups = {crumbly = 2},
-		drop = "default:dirt",
-		sounds = default.node_sound_dirt_defaults(),
-	}
-	if FOOTPRINTS_EROSION then
-		footprints_trail_def.groups.footprints_erodes = 1
-	end
-	minetest.register_node("footprints:trail", footprints_trail_def)
-	if FOOTPRINTS_EROSION then
-		footprints.register_erosion("footprints:trail", "default:dirt")
-	end
-
-	-- hard-packed dry soil
-	local footprints_dry_trail_def = {
-		tiles = {"footprints_trailtop.png", "default_dry_dirt.png",
-			"default_dry_dirt.png^footprints_trailside.png"},
-		groups = {crumbly = 2},
-		drop = "default:dry_dirt",
-		sounds = default.node_sound_dirt_defaults(),
-	}
-	if FOOTPRINTS_EROSION then
-		footprints_dry_trail_def.groups.footprints_erodes = 1
-	end
-	minetest.register_node("footprints:dry_trail", footprints_dry_trail_def)
-	if FOOTPRINTS_EROSION then
-		footprints.register_erosion("footprints:dry_trail", "default:dry_dirt")
-	end
-
-	-- Default dirt
-
-	footprints.register_trample_node("default:dirt", {
-		trampled_node_name = "footprints:dirt",
-		trampled_node_def_override = {description = S("Dirt with Footprint"),},
-		hard_pack_node_name = "footprints:trail",
-		footprint_opacity = 96,
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dirt_with_grass", {
-		trampled_node_name = "footprints:dirt_with_grass",
-		trampled_node_def_override = {description = S("Dirt with Grass and Footprint"),},
-		hard_pack_node_name = "footprints:trail",
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dirt_with_dry_grass", {
-		trampled_node_name = "footprints:dirt_with_dry_grass",
-		trampled_node_def_override = {description = S("Dirt with Dry Grass and Footprint"),},
-		hard_pack_node_name = "footprints:trail",
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dirt_with_snow", {
-		trampled_node_name = "footprints:dirt_with_snow",
-		trampled_node_def_override = {description = S("Dirt with Snow and Footprint"),},
-		hard_pack_node_name = "footprints:trail",
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dirt_with_rainforest_litter", {
-		trampled_node_name = "footprints:dirt_with_rainforest_litter",
-		trampled_node_def_override = {description = S("Dirt with Rainforest Litter and Footprint"),},
-		hard_pack_node_name = "footprints:trail",
-		footprint_opacity = 96,
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dirt_with_coniferous_litter", {
-		trampled_node_name = "footprints:dirt_with_coniferous_litter",
-		trampled_node_def_override = {description = S("Dirt with Coniferous Litter and Footprint"),},
-		hard_pack_node_name = "footprints:trail",
-		footprint_opacity = 128,
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dry_dirt", {
-		trampled_node_name = "footprints:dry_dirt",
-		trampled_node_def_override = {description = S("Dry Dirt with Footprint"),},
-		hard_pack_node_name = "footprints:dry_trail",
-		footprint_opacity = 96,
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:dry_dirt_with_dry_grass", {
-		trampled_node_name = "footprints:dry_dirt_with_dry_grass",
-		trampled_node_def_override = {description = S("Dry Dirt with Dry Grass and Footprint"),},
-		hard_pack_node_name = "footprints:dry_trail",
-		footprint_opacity = 96,
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	-- Default sand
-
-	footprints.register_trample_node("default:sand", {
-		trampled_node_name = "footprints:sand",
-		trampled_node_def_override = {description = S("Sand with Footprint"),},
-	})
-
-	footprints.register_trample_node("default:desert_sand", {
-		trampled_node_name = "footprints:desert_sand",
-		trampled_node_def_override = {description = S("Desert Sand with Footprint"),},
-	})
-
-	footprints.register_trample_node("default:silver_sand", {
-		trampled_node_name = "footprints:silver_sand",
-		trampled_node_def_override = {description = S("Silver Sand with Footprint"),},
-	})
-
-	footprints.register_trample_node("default:gravel", {
-		trampled_node_name = "footprints:gravel",
-		trampled_node_def_override = {description = S("Gravel with Footprint"),},
-		footprint_opacity = 128,
-	})
-
-	-- Default snow
-
-	footprints.register_trample_node("default:snowblock", {
-		trampled_node_name = "footprints:snowblock",
-		trampled_node_def_override = {description = S("Snow Block with Footprint"),},
-		hard_pack_node_name = "default:ice",
-		hard_pack_probability = HARDPACK_PROBABILITY,
-		hard_pack_count = HARDPACK_COUNT,
-	})
-
-	footprints.register_trample_node("default:snow", {
-		trampled_node_name = "footprints:snow",
-		trampled_node_def_override = {description = S("Snow with Footprint"),},
-	})
-end
-
-if minetest.get_modpath("farming") then
-	local hoe_converts_nodes = {}
-
-	local sounds
-	if default_modpath then
-		sounds = default.node_sound_leaves_defaults()
-	end
-	-- Flattened wheat
-	minetest.register_node("footprints:wheat", {
-		description = S("Flattened Wheat"),
-		tiles = {"footprints_flat_wheat.png"},
-		inventory_image = "footprints_flat_wheat.png",
-		drawtype = "nodebox",
-		paramtype = "light",
-		paramtype2 = "facedir",
-		buildable_to = true,
-		node_box = {
-			type = "fixed",
-			fixed = {
-				{-0.5, -0.5, -0.5, 0.5, -3 / 8, 0.5}
-			},
-		},
-		groups = {snappy = 3, flammable = 2, attached_node = 1},
-		drop = "",
-		sounds = sounds,
-	})
-	
-	footprints.register_trample_node("farming:wheat_5", {
-		trampled_node_name = "footprints:wheat",
-		randomize_trampled_param2 = true,
-	})
-	footprints.register_trample_node("farming:wheat_6", {
-		trampled_node_name = "footprints:wheat",
-		randomize_trampled_param2 = true,
-	})
-	footprints.register_trample_node("farming:wheat_7", {
-		trampled_node_name = "footprints:wheat",
-		randomize_trampled_param2 = true,
-	})
-	footprints.register_trample_node("farming:wheat_8", {
-		trampled_node_name = "footprints:wheat",
-		randomize_trampled_param2 = true,
-	})
-	
-	minetest.register_node("footprints:cotton", {
-		description = S("Flattened Cotton"),
+--FARMABLE CROPS
+--no matter what plant it was, it will be trampled anyway. But small plants must leave small nodes
+for size = 1, 8 do
+	local s = (9 - size) / 8
+	--create trampled nodes
+	minetest.register_node("footprints:plant_"..size, {
+		description = S("Flattened Plant"),
 		tiles = {"footprints_flat_cotton.png"},
 		inventory_image = "footprints_flat_cotton.png",
 		drawtype = "nodebox",
@@ -343,35 +166,28 @@ if minetest.get_modpath("farming") then
 		node_box = {
 			type = "fixed",
 			fixed = {
-				{-0.5, -0.5, -0.5, 0.5, -3 / 8, 0.5}
+				{-0.5*s, -0.5, -0.5*s, 0.5*s, -3 / 8, 0.5*s}
 			},
 		},
 		groups = {snappy = 3, flammable = 2, attached_node = 1},
 		drop = "",
 		sounds = sounds,
 	})
-	
-	footprints.register_trample_node("farming:cotton_5", {
-		trampled_node_name = "footprints:cotton",
-		randomize_trampled_param2 = true,
-	})
-	footprints.register_trample_node("farming:cotton_6", {
-		trampled_node_name = "footprints:cotton",
-		randomize_trampled_param2 = true,
-	})
-	footprints.register_trample_node("farming:cotton_7", {
-		trampled_node_name = "footprints:cotton",
-		randomize_trampled_param2 = true,
-	})
-	footprints.register_trample_node("farming:cotton_8", {
-		trampled_node_name = "footprints:cotton",
-		randomize_trampled_param2 = true,
-	})
-	
-	-- Allow hoes to turn hardpack back into bare dirt
-	footprints.register_hoe_converts = function(target_node, converted_node)
-		hoe_converts_nodes[target_node] = converted_node
-	end
+end
+
+-- Allow hoes to turn hardpack back into bare dirt
+local hoe_converts_nodes = {}
+footprints.register_hoe_converts = function(target_node, converted_node)
+	hoe_converts_nodes[target_node] = converted_node
+end
+
+
+--all trampleable nodes were moved to a separate file.
+dofile(minetest.get_modpath(minetest.get_current_modname()).."/mods.lua")
+
+
+--now adding all hoe converts
+if minetest.get_modpath("farming") then
 	
 	local old_hoe_on_use = farming.hoe_on_use
 	if not old_hoe_on_use then
@@ -427,10 +243,6 @@ else
 	end
 end
 
-if default_modpath then
-	footprints.register_hoe_converts("footprints:trail", "default:dirt")
-	footprints.register_hoe_converts("footprints:dry_trail", "default:dry_dirt")
-end
 
 -- Globalstep function
 
@@ -458,8 +270,12 @@ local test_trample_count = function(footprints_def, pos)
 	return false
 end
 
-local math_floor = math.floor
+--this shortcut does not shorten any cut. Does changing dot to underscore change anything?
+--local math.floor = math.floor
 
+
+--this is where all magic happens
+--I've made so many comments down there to help myself to understand how it works
 minetest.register_globalstep(function(dtime)
 	timer = timer + dtime
 	if timer > GLOBALSTEP_INTERVAL then
@@ -467,67 +283,73 @@ minetest.register_globalstep(function(dtime)
 		for _, player in ipairs(minetest.get_connected_players()) do
 			local pos = player:get_pos()
 			local player_name = player:get_player_name()
-			local pos_x_plus_half = math_floor(pos.x + 0.5)
-			local pos_z_plus_half = math_floor(pos.z + 0.5)
-			local pos_y = pos.y
-			local current_player_pos = {
+			local pos_x_plus_half = math.floor(pos.x + 0.5)
+			local pos_z_plus_half = math.floor(pos.z + 0.5)
+			local pos_y = math.floor(pos.y + 0.4) --Changed this offset to 0.4 (was 0.2 andnot here) after rewriting some code
+			local current_player_pos = { --where player really is
 				x = pos_x_plus_half,
-				y = math_floor(pos_y + 0.2),
+				y = pos_y,
 				z = pos_z_plus_half
 			}
 			
-			local player_pos_previous = player_pos_previous_map[player_name]
-
+			--movement part. Let's finish it quickly
+			local player_pos_previous = player_pos_previous_map[player_name]  --where player was last step
 			if player_pos_previous == nil then
 				break
 			end
+			player_pos_previous_map[player_name] = current_player_pos
+			--formalities are settled, we now can continue
 
-			if current_player_pos.x ~= player_pos_previous.x or
-				current_player_pos.y < player_pos_previous.y or
+			--main part
+			if current_player_pos.x ~= player_pos_previous.x or --so player has moved horizontally
+				current_player_pos.y < player_pos_previous.y or  --or fell down
 				current_player_pos.z ~= player_pos_previous.z then
 				
-				local pos_ground_cover = {
+				local pos_ground_cover = { --ground cover is what's on the ground: grass, snow
 					x = pos_x_plus_half,
-					y = math_floor(pos_y + 1.2),
+					y = pos_y + 1,
 					z = pos_z_plus_half
 				}
-				local name_ground_cover = minetest.get_node(pos_ground_cover).name
+				local name_ground_cover = minetest.get_node(pos_ground_cover).name --how is it named
 				
-				-- test ground cover first (snow, wheat)
-				local footprints_def = trampleable_nodes[name_ground_cover]
+				-- test ground cover first (snow, grass)
+				-- by some reason this part don't work correctly
+				local footprints_def = trampleable_nodes[name_ground_cover] --is it trampleable at all
 				if footprints_def then
-					if math.random() <= footprints_def.probability then
-						local pos_ground_cover_plus = {
+					local prob = footprints_def.probability
+					if SQUARED_PROBABILITIES then prob = prob^2
+					if math.random() <= prob then -- trow the dice
+						--[[local pos_ground_cover = {  --we don't really need this as we already know where the ground cover is
 							x = pos_x_plus_half,
-							y = math_floor(pos_y + 0.5),
+							y = pos_y,  --math.floor(pos_y + 0.3),
 							z = pos_z_plus_half
-						}
-						if test_trample_count(footprints_def, pos_ground_cover_plus) then
-							minetest.set_node(pos_ground_cover_plus, {name = footprints_def.name, param2 = get_param2(footprints_def)})
+						} --]]
+						if test_trample_count(footprints_def, pos_ground_cover) then
+							minetest.set_node(pos_ground_cover, {name = footprints_def.name, param2 = get_param2(footprints_def)})
 						end
 					end
 				else
-					local pos_ground = {
+					local pos_ground = { --now see what's on the ground
 						x = pos_x_plus_half,
-						y = math_floor(pos_y + 0.4),
+						y = pos_y,
 						z = pos_z_plus_half
 					}
-					local name_ground = minetest.get_node(pos_ground).name
-					footprints_def = trampleable_nodes[name_ground]
-					if footprints_def and math.random() <= footprints_def.probability then
-						local pos_groundpl = {
-							x = pos_x_plus_half,
-							y = math_floor(pos_y - 0.5),
-							z =pos_z_plus_half
-						}
-						if test_trample_count(footprints_def, pos_groundpl) then
-							minetest.set_node(pos_groundpl, {name = footprints_def.name, param2 = get_param2(footprints_def)})
+					local name_ground = minetest.get_node(pos_ground).name --how is ground named
+
+					
+					local ground_def = trampleable_nodes[name_ground] -- is it trampleable at all
+					if ground_def then
+						local proba = footprints_def.probability
+						if SQUARED_PROBABILITIES then proba = proba^2
+						if math.random() <= proba then --throw the dice
+							--skipped the same part here
+							if test_trample_count(ground_def, pos_ground) then
+								minetest.set_node(pos_ground, {name = ground_def.name, param2 = get_param2(ground_def)})
+							end
 						end
 					end
 				end
 			end
-
-			player_pos_previous_map[player_name] = current_player_pos
 		end
 	end
 end)
@@ -559,7 +381,8 @@ if EROSION then
 	})
 end
 
-minetest.register_alias("trail:cotton",						"footprints:cotton")
+minetest.register_alias("footprints:cotton",					"footprints:plant_8")
+minetest.register_alias("trail:cotton",						"footprints:plant_8")
 minetest.register_alias("trail:desert_sand",				"footprints:desert_sand")
 minetest.register_alias("trail:dirt",						"footprints:dirt")
 minetest.register_alias("trail:dirt_with_coniferous_litter","footprints:dirt_with_coniferous_litter")
@@ -576,4 +399,4 @@ minetest.register_alias("trail:silver_sand",				"footprints:silver_sand")
 minetest.register_alias("trail:snow",						"footprints:snow")
 minetest.register_alias("trail:snowblock",					"footprints:snowblock")
 minetest.register_alias("trail:trail",						"footprints:trail")
-minetest.register_alias("trail:wheat",						"footprints:wheat")
+minetest.register_alias("trail:wheat",						"footprints:plant_8")
