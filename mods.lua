@@ -316,12 +316,14 @@ end --]]
 if farm and TRAMPLE_PLOWED_SOIL then
 	footprints.register_trample_node("farming:soil", {
 		trampled_node_name = "default:dirt",
-		probability = 0.2
+		probability = 0.2,
+		alternate_sneak_q = 0.3
 	})
 	
 	footprints.register_trample_node("farming:soil_wet", {
 		trampled_node_name = "default:dirt",
-		probability = 0.6
+		probability = 0.6,
+		alternate_sneak_q = 0.3
 	})
 end
 
@@ -338,13 +340,14 @@ if TRAMPLE_CROPS then
 		for plant, stages in pairs(crops) do
 			
 			--make all avilable crops trampable
-			for growth = 1, stages do
-				footprints.register_trample_node("ethereal:"..plant.."_"..growth, {
-					trampled_node_name = "footprints:plant_"..(stages + 1 - growth),
-					randomize_trampled_param2 = true,
-					probability = ((stages + 1 - growth) / stages) ^ 2,
-				})
-			end
+
+			footprints.register_trampled_plant("ethereal:"..plant, {
+				growth_stages = stages,
+				trampled_node_name = "footprints:plant",
+				numerate_trampled_node = true,
+				base_probability = 1.0,
+			})
+			
 		end	
 	end
 
@@ -401,13 +404,13 @@ if TRAMPLE_CROPS then
 		for plant, stages in pairs(crops) do
 			
 			--make all avilable plants trampleable
-			for growth = 1, stages do
-				footprints.register_trample_node("farming:"..plant.."_"..growth, {
-					trampled_node_name = "footprints:plant_"..(stages + 1 - growth),
-					randomize_trampled_param2 = true,
-					probability = ((stages + 1 - growth) / stages) ^ 2,
-				})
-			end
+
+			footprints.register_trampled_plant("farming:"..plant, {
+				growth_stages = stages,
+				trampled_node_name = "footprints:plant",
+				numerate_trampled_node = true,
+				base_probability = 1.0,
+			})
 		end
 	end
 end
@@ -495,39 +498,14 @@ if TRAMPLE_GRASS then
 	--Default MT
 	if default_modpath then
 		--lower grass
-		for growth = 2, 5 do
-			footprints.register_trample_node("default:grass_"..growth, {
-				trampled_node_name = "default:grass_"..(growth - 1),
-				probability = 0.9,
-			})
-		end
-
-		for growth = 2, 5 do
-			footprints.register_trample_node("default:dry_grass_"..growth, {
-				trampled_node_name = "default:dry_grass_"..(growth - 1),
-				probability = 0.9,
-			})
-		end
-
-		for growth = 2, 3 do
-			footprints.register_trample_node("default:marram_grass_"..growth, {
-				trampled_node_name = "default:marram_grass_"..(growth - 1),
-				probability = 0.9,
-			})
-		end
-
-		for growth = 2, 3 do
-			footprints.register_trample_node("default:fern_"..growth, {
-				trampled_node_name = "default:fern_"..(growth - 1),
-				probability = 0.9,
-			})
-		end
-		--disappearing grasses
 		
-		table.insert(grasses, "default:grass_1")
-		table.insert(grasses, "default:dry_grass_1")
-		table.insert(grasses, "default:marram_grass_1")
-		table.insert(grasses, "default:fern_1")
+		footprints.register_trampled_plant("default:grass", {
+			growth_stages = 5,
+			trample_to_lower_stage = true,
+			base_probability = 0.9,
+		})
+
+		--disappearing grasses
 		table.insert(grasses, "default:junglegrass")
 		table.insert(grasses, "default:dry_shrub")
 	end
@@ -562,15 +540,13 @@ if TRAMPLE_GRASS then
 
 	--NodeCore
 	if nc then
-
-		for growth = 2, 5 do
-			footprints.register_trample_node("nc_flora:sedge_"..growth, {
-				trampled_node_name = "nc_flora:sedge_"..(growth - 1),
-				probability = 0.9,
-			})
-		end
 		
-		table.insert(grasses, "nc_flora:sedge_1")
+		footprints.register_trampled_plant("nc_flora:sedge", {
+			growth_stages = 5,
+			trample_to_lower_stage = true,
+			base_probability = 0.9,
+		})
+		
 		table.insert(grasses, "nc_flora:rush")
 		table.insert(grasses, "nc_flora:rush_dry")
 		for a = 1, 5 do

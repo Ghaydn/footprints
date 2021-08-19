@@ -27,3 +27,5 @@ footprints_trample_plowed_soil (Turn plowed soil back into normal when it's tram
 footprints_trample_wild_grass (Fade grass when a player walks through it) bool true
 
 footprints_squared_probabilities (Square all probabilities make them feeled more natural) bool true
+
+footprints_sneak_coefficient (Sneaking multiplies trampling probability by this coefficient) float 0.5

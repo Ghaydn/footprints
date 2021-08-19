@@ -16,6 +16,7 @@ local EROSION = minetest.settings:get_bool("footprints_erosion", true) -- Enable
 local EROSION_INTERVAL = minetest.settings:get("footprints_erosion_interval") or 128 -- Erosion interval.
 local EROSION_CHANCE = minetest.settings:get("footprints_erosion_chance") or 2 -- Erosion 1/x chance.
 local SQUARED_PROBABILITIES = minetest.settings:get_bool("footprints_squared_probabilities", true)
+local SNEAK_Q = minetest.settings:get("footprints_sneak_coefficient") or 0.5
 
 -- Utility
 
@@ -149,10 +150,52 @@ footprints.register_erosion = function(source_node_name, destination_node_name)
 	erosion[source_node_name] = destination_node_name
 end
 
+footprints.register_trampled_plant = function(plant_name, plant_def)
+	plant_def = plant_def or {}
+
+	trampled_node_name = plant_def.trampled_node_name or "air"
+	base_probability = plant_def.base_probability or 1.0
+	stages = plant_def.growth_stages or 1
+
+	if stages >= 2 then
+		for growth = 2, stages do
+			local tnode_name = trampled_node_name
+			local probab = base_probability
+
+			if plant_def.numerate_trampled_node then
+				tnode_name = trampled_node_name.."_"..(stages + 1 - growth)
+				probab = base_probability * (stages + 1 - growth) / stages
+			end
+			if plant_def.trample_to_lower_stage then
+				tnode_name = plant_name.."_"..(growth-1)
+				probab = base_probability
+			end
+
+			footprints.register_trample_node(plant_name.."_"..growth, {
+				trampled_node_name = tnode_name,
+				randomize_trampled_param2 = true,
+				probability = probab,
+			})
+		end
+	end
+	local unode_name = trampled_node_name
+	local probac = base_probability
+	
+	if plant_def.numerate_trampled_node then
+		unode_name = trampled_node_name.."_1"
+		--probac = base_probability / stages
+	end
+
+	footprints.register_trample_node(plant_name.."_1", {
+		trampled_node_name = unode_name,
+		randomize_trampled_param2 = true,
+		probability = probac,
+	})
+end
 
 --FARMABLE CROPS
 --no matter what plant it was, it will be trampled anyway. But small plants must leave small nodes
-for size = 1, 8 do
+for size = 1, 9 do
 	local s = (9 - size) / 8
 	--create trampled nodes
 	minetest.register_node("footprints:plant_"..size, {
@@ -285,7 +328,7 @@ minetest.register_globalstep(function(dtime)
 			local player_name = player:get_player_name()
 			local pos_x_plus_half = math.floor(pos.x + 0.5)
 			local pos_z_plus_half = math.floor(pos.z + 0.5)
-			local pos_y = math.floor(pos.y + 0.4) --Changed this offset to 0.4 (was 0.2 andnot here) after rewriting some code
+			local pos_y = math.floor(pos.y + 0.2) --Changed this offset to 0.4 (was 0.2 andnot here) after rewriting some code
 			local current_player_pos = { --where player really is
 				x = pos_x_plus_half,
 				y = pos_y,
@@ -317,7 +360,12 @@ minetest.register_globalstep(function(dtime)
 				local footprints_def = trampleable_nodes[name_ground_cover] --is it trampleable at all
 				if footprints_def then
 					local prob = footprints_def.probability
-					if SQUARED_PROBABILITIES then prob = prob^2
+					
+					if player:get_player_control().sneak then
+						if footprints_def.alternate_sneak_q then prob = prob * footprints_def.alternate_sneak_q
+						else prob = prob * SNEAK_Q end
+					end
+					if SQUARED_PROBABILITIES then prob = prob^2 end
 					if math.random() <= prob then -- trow the dice
 						--[[local pos_ground_cover = {  --we don't really need this as we already know where the ground cover is
 							x = pos_x_plus_half,
@@ -339,8 +387,12 @@ minetest.register_globalstep(function(dtime)
 					
 					local ground_def = trampleable_nodes[name_ground] -- is it trampleable at all
 					if ground_def then
-						local proba = footprints_def.probability
-						if SQUARED_PROBABILITIES then proba = proba^2
+						local proba = ground_def.probability
+						if player:get_player_control().sneak then
+							if ground_def.alternate_sneak_q then proba = proba * ground_def.alternate_sneak_q
+							else proba = proba * SNEAK_Q end
+						end
+						if SQUARED_PROBABILITIES then proba = proba^2 end
 						if math.random() <= proba then --throw the dice
 							--skipped the same part here
 							if test_trample_count(ground_def, pos_ground) then
@@ -381,14 +433,15 @@ if EROSION then
 	})
 end
 
-minetest.register_alias("nc_footprints:dirt"					"footprints:dirt")
-minetest.register_alias("nc_footprints:dirt_with_grass"				"footprints:dirt_with_grass")
-minetest.register_alias("nc_footprints:dirt_loose"				"footprints:dirt_loose")
-minetest.register_alias("nc_footprints:sand"					"footprints:sand")
-minetest.register_alias("nc_footprints:sand_loose"				"footprints:sand_loose")
-minetest.register_alias("nc_footprints:gravel"					"footprints:gravel")
-minetest.register_alias("nc_footprints:gravel_loose"				"footprints:gravel_loose")
-minetest.register_alias("nc_footprints:trail"					"footprints:dirt_with_grass")
+minetest.register_alias("nc_footprints:dirt",					"footprints:dirt")
+minetest.register_alias("nc_footprints:dirt_with_grass",			"footprints:dirt_with_grass")
+minetest.register_alias("nc_footprints:dirt_loose",				"footprints:dirt_loose")
+minetest.register_alias("nc_footprints:sand",					"footprints:sand")
+minetest.register_alias("nc_footprints:sand_loose",				"footprints:sand_loose")
+minetest.register_alias("nc_footprints:gravel",					"footprints:gravel")
+minetest.register_alias("nc_footprints:gravel_loose",				"footprints:gravel_loose")
+minetest.register_alias("nc_footprints:trail",					"footprints:dirt_with_grass")
+minetest.register_alias("footprints:plant",					"footprints:plant_8")
 minetest.register_alias("footprints:cotton",					"footprints:plant_8")
 minetest.register_alias("trail:cotton",						"footprints:plant_8")
 minetest.register_alias("trail:desert_sand",					"footprints:desert_sand")

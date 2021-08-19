@@ -47,6 +47,7 @@ trample_def:
                            -- ignored if trampled_node_name is a node that already exists
 	hard_pack_count = 10, -- The number of times the trampled node needs to be stepped on
                            -- (and pass the probability check) to turn to the hard packed state
+	alternate_sneak_q	--if defined, sets alternate sneaking corfficient for this exact node
 }
 ```
 
@@ -69,6 +70,35 @@ If you've got the `farming` mod installed you can allow hardpack nodes to be res
 footprints.register_hoe_converts(starting_node_name, restored_node_name)
 ```
 
+### Plants API
+
+For some nodes that have names like mod:node_1 it is useful to register trampling with plants api:
+
+```
+footprints.register_trampled_plant(plant_name, plant_def)
+
+plant_def:
+{
+	growth_stages = 1 .. 9			-- how many forms this plant can have after underscore.
+						-- This is exactly why this function appeared, so there's no point
+						-- to use it with non-numerated nodes
+
+	trampled_node_name = 			-- name of the node that replaces this plant, default is air
+						-- can be numerated if one_node_for_all is false
+
+	numerate_trampled_node = bool 		-- if false then all stages will fade into one node and it will nor be numerated.
+						-- true means that trampled nodes will be named like mod:node_2
+
+	trample_to_lower_stage = bool 		-- if true then bigger stages will fade to smaller ones.
+						-- It is useful for grasses that don't actually grow, they just spawn
+						-- in the world.
+
+	base_probability = 0.1 to 1.0		-- lower plants will get higher probability to be trampled,
+						-- but only if trample_to_lower_stage is false.
+						-- It is useful for farming: smaller crops are younger and more sensitive
+
+}
+
 ## License
 
 Licenses: Source code MIT. Textures CC BY-SA (3.0)
@@ -81,3 +111,5 @@ Licenses: Source code MIT. Textures CC BY-SA (3.0)
 	changed farming crops trampling mechanics
 	fixed node doubling bug
 	added trampling of grass and saplings
+	added sneak coefficient - sneaking players make less footsteps
+	added api for the crops with several growth stages
